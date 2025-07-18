@@ -14,6 +14,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-#json files
+# Ignore all package-lock.json files
 server/package-lock.json
 client/package-lock.json
