@@ -13,9 +13,8 @@ pnpm-lock.yaml
 
 # Environment variables
 .env
+/server/.env
 .env.*.local
-
-#json files
 
 # Logs
 logs/
@@ -50,4 +49,5 @@ coverage/
 *.mongodb
 dump/
 
+# Editor config
 .editorconfig
