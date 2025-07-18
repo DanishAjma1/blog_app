@@ -1,53 +1,19 @@
-# Node.js dependencies
-/server/node_modules/
+# Ignore editor settings
+.vscode/
+.editorconfig
+
+# Ignore node_modules in root, client, and server
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Other typical ignores
+server/.env
+.DS_Store
 npm-debug.log*
-/client/node_modules/
-/client/package-lock.json
-/client/yarn.lock
-/client/pnpm-lock.yaml
 yarn-debug.log*
 yarn-error.log*
-/server/package-lock.json
-yarn.lock
-pnpm-lock.yaml
 
-# Environment variables
-.env
-/server/.env
-.env.*.local
-
-# Logs
-logs/
-*.log
-
-# OS generated files
-.DS_Store
-Thumbs.db
-
-# Build output
-dist/
-build/
-tmp/
-temp/
-.cache/
-.next/
-out/
-coverage/
-
-# IDE files
-.vscode/
-.idea/
-*.sublime-workspace
-*.sublime-project
-
-# Misc
-*.local
-*.swp
-*.swo
-
-# MongoDB database files (if any local dev)
-*.mongodb
-dump/
-
-# Editor config
-.editorconfig
+#json files
+server/package-lock.json
+client/package-lock.json
