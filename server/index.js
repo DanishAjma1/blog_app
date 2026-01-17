@@ -13,6 +13,8 @@ const app = express();
 const http = require("http");
 const socketIO = require("socket.io");
 const Message = require("./libs/models/messages.js");
+const { createClient } = require("redis");
+const { createAdapter } = require("@socket.io/redis-adapter");
 app.use(express.json());
 app.use(cookieParser());
 const server = http.createServer(app);
@@ -23,15 +25,24 @@ const io = socketIO(server,{
     credentials: true,
   })
 });
+const pubClient = createClient({ url: "redis://localhost:6379" });
+const subClient = pubClient.duplicate();
+
+(async()=>{
+  await pubClient.connect();
+  await subClient.connect();
+
+  io.adapter(createAdapter(pubClient,subClient));
+})();
 
 let users = {};
 
 io.on("connection", (socket) => {
   console.log("New client connected: "+ socket.id);
 
-  socket.on("join",(userId) => {
-    users[userId] = socket.id;
-    console.log(`User ${userId} joined the chat`);
+  socket.on("join",async(userId) => {
+    await pubClient.set(`user:${userId}`,socket.id);
+    console.log(`User ${userId} is connected with id ${socket.id} to the chat`);
   });
 
   socket.on("sendMessage", async ({ senderId,receiverId,content }) => {
@@ -61,14 +72,16 @@ io.on("connection", (socket) => {
     }
   });
   
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     io.emit("onLeave");
-    Object.keys(users).forEach(element => {
-      if(users[element] === socket.id) {
-        delete users[element];
+    const keys = await pubClient.keys("user:*");
+    for (const key of keys) {
+      const userId= pubClient.get(key);
+      if(userId == socket.id){
+        await pubClient.del(key);
+        console.log("Client disconnected");
       }
-    });
-    console.log("Client disconnected");
+    }
   });
 });
 
@@ -92,11 +105,7 @@ app.get("/isloggedin", isLoggedIn, (req, res) => {
   res.status(200).json({
     status: "success",
     message: "User is authenticated",
-    user: {
-      id: req.session.user.id,
-      email: req.session.user.email,
-      name: req.session.user.name,
-    },
+    user: req.session.user,
   });
 });
 app.use((req, res, next) => {

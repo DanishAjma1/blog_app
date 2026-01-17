@@ -7,7 +7,7 @@ connectDatabase();
 router.get("/getMessages", async (req, res) => {
   try {
     const messages = await // In your backend:
-Message.find().sort({ createdAt: -1 }).limit(50);
+    Message.find().sort({ timestamp: -1 }).limit(100).exec();
     res.json(messages);
   } catch (err) {
     console.log("Error while loading messages..");
@@ -45,6 +45,7 @@ router.put("/updateMessage", async (req,res)=>{
 router.delete("/deleteMessage", async (req,res)=>{
     try{
         const id = req.params.id;
+        
         const deletedMessage = await Message.delete(id);
         if(!deletedMessage){
             res.status(400).json({ message:"bad request" });

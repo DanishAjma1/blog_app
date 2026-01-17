@@ -1,0 +1,19 @@
+# Ignore editor settings
+.vscode/
+.editorconfig
+
+# Ignore node_modules in root, client, and server
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Other typical ignores
+server/.env
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore all package-lock.json files
+server/package-lock.json
+client/package-lock.json
